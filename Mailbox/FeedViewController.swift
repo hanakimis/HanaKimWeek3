@@ -60,12 +60,10 @@ class FeedViewController: UIViewController {
                 // return the message back
                 
                 UIView.animateWithDuration(0.8, animations: { () -> Void in
-                    self.messageImage.frame.origin = 0
+                    self.messageImage.frame.origin.x = 0
+                    self.laterIconImage.frame.origin.x = self.laterIconOriginalOriginX
                 })
             
-                UIView.animateWithDuration(0.8, delay: 0.0, options: nil, animations: { () -> Void in
-                    self.messageImage.frame.origin = 0
-                }, completion:nil)
             }
         }
         
