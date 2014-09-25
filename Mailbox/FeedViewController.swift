@@ -47,7 +47,6 @@ class FeedViewController: UIViewController {
             messageImage.frame.origin.x = translationX
             
             if (translationX < -60) {
-                // move icon
                 laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
 
                 
