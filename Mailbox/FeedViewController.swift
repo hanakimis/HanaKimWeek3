@@ -12,19 +12,14 @@ class FeedViewController: UIViewController {
     @IBOutlet weak var feedImage: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var messageImage: UIImageView!
-    @IBOutlet weak var helpTextImage: UIImageView!
-    @IBOutlet weak var searchImage: UIImageView!
     @IBOutlet weak var messageView: UIView!
-    
     @IBOutlet weak var archiveIconImage: UIImageView!
     @IBOutlet weak var laterIconImage: UIImageView!
-    
     @IBOutlet weak var rescheduleImage: UIImageView!
-    
-    
     
     var laterIconOriginalOriginX: CGFloat!
     var translationX: CGFloat!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +27,6 @@ class FeedViewController: UIViewController {
         
         var height = feedImage.frame.height + messageImage.frame.height
         scrollView.contentSize = CGSize(width: 320, height: height)
-        
     }
 
     
@@ -48,30 +42,30 @@ class FeedViewController: UIViewController {
             
             if (translationX < -60) {
                 laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
-
-                
-                
-                //println("-----------------------------")
-                //println("+      original:   \(laterIconOriginalOriginX)")
-                //println("+   translation:   \(translationX)")
-                //println("= Icon location: \(laterIconImage.frame.origin.x)")
-
                 // change background-color
                 
-                println("+   translation:   \(translationX)")
-
             } else if (translationX > 60) {
-                // do the check thing
+                // swipe left to right
             }
             
             
             
         } else if (panGesture.state == UIGestureRecognizerState.Ended) {
-            // scrollback
-            println("after pan:   \(translationX)")
 
             if (translationX < -160) {
                 rescheduleImage.alpha = 1
+            } else if (translationX > 160) {
+                
+            } else {
+                // return the message back
+                
+                UIView.animateWithDuration(0.8, animations: { () -> Void in
+                    self.messageImage.frame.origin = 0
+                })
+            
+                UIView.animateWithDuration(0.8, delay: 0.0, options: nil, animations: { () -> Void in
+                    self.messageImage.frame.origin = 0
+                }, completion:nil)
             }
         }
         
