@@ -41,9 +41,14 @@ class FeedViewController: UIViewController {
             messageImage.frame.origin.x = translationX
             
             if (translationX < -60) {
-                laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
-                // change background-color
                 
+                if (translationX < -260) {
+                    // make it invisible
+                    laterIconImage.image = UIImage(named: "list_icon")
+                } else {
+                    laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
+                    // make it more transparent
+                }
             } else if (translationX > 60) {
                 // swipe left to right
             }
@@ -52,13 +57,11 @@ class FeedViewController: UIViewController {
             
         } else if (panGesture.state == UIGestureRecognizerState.Ended) {
 
-            if (translationX < -160) {
+            if (translationX < -260) {
                 rescheduleImage.alpha = 1
-            } else if (translationX > 160) {
+            } else if (translationX > 260) {
                 
             } else {
-                // return the message back
-                
                 UIView.animateWithDuration(0.8, animations: { () -> Void in
                     self.messageImage.frame.origin.x = 0
                     self.laterIconImage.frame.origin.x = self.laterIconOriginalOriginX
