@@ -16,6 +16,7 @@ class FeedViewController: UIViewController {
     @IBOutlet weak var archiveIconImage: UIImageView!
     @IBOutlet weak var laterIconImage: UIImageView!
     @IBOutlet weak var rescheduleImage: UIImageView!
+    @IBOutlet weak var listImage: UIImageView!
     
     var laterIconOriginalOriginX: CGFloat!
     var archiveIconOriginalOriginX: CGFloat!
@@ -29,6 +30,7 @@ class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         rescheduleImage.alpha = 0
+        listImage.alpha = 0
         archiveIconImage.alpha = 0
         laterIconImage.alpha = 0
         
@@ -43,20 +45,24 @@ class FeedViewController: UIViewController {
     }
     
     
+    
     @IBAction func onPanMessage(panGesture: UIPanGestureRecognizer) {
         if (panGesture.state == UIGestureRecognizerState.Began) {
             laterIconOriginalOriginX = laterIconImage.frame.origin.x
             archiveIconOriginalOriginX = archiveIconImage.frame.origin.x
+            
         } else if (panGesture.state == UIGestureRecognizerState.Changed) {
             
-            messageImage.frame.origin.x = panGesture.translationInView(messageView).x
-            translationX = messageImage.frame.origin.x
+            translationX = panGesture.translationInView(messageView).x
+            messageImage.frame.origin.x = translationX
             
             laterIconImage.alpha = translateToAlpha(translationX)
             archiveIconImage.alpha = translateToAlpha(translationX)
             
-            if (translationX < 60) && (translationX > -60) {
-                self.messageView.backgroundColor = self.gray
+            println("translationX: \(translationX)")
+            
+            if (60 <= translationX) && (translationX >= -60) {
+                self.messageView.backgroundColor = gray
                 
             } else if (translationX < -60) {
                 messageView.backgroundColor = yellow
@@ -70,8 +76,11 @@ class FeedViewController: UIViewController {
                     laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
                 }
                 
-            } else if (translationX > 60) {
-                self.messageView.backgroundColor = self.green
+            }
+            
+            if (translationX > 60) {
+                println("asdfasdf")
+                self.messageView.backgroundColor = green
                 
                 if (translationX > 260) {
                     messageView.backgroundColor = red
@@ -83,10 +92,14 @@ class FeedViewController: UIViewController {
             }
         } else if (panGesture.state == UIGestureRecognizerState.Ended) {
 
-            if (translationX < -260) {
+            if (-260 < translationX) && (translationX < -60) {
                 rescheduleImage.alpha = 1
+                
+            } else if (translationX < -260) {
+                listImage.alpha = 1
+                
             } else if (translationX > 260) {
-                // delete icon
+
             } else {
                 UIView.animateWithDuration(0.8, animations: { () -> Void in
                     self.messageImage.frame.origin.x = 0
@@ -110,6 +123,9 @@ class FeedViewController: UIViewController {
     }
     
     
+    @IBAction func onTapList(sender: UITapGestureRecognizer) {
+        listImage.alpha = 0
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

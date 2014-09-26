@@ -57,14 +57,6 @@
                                     </view>
                                 </subviews>
                             </scrollView>
-                            <imageView alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="reschedule" id="yoP-65-gfR">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <gestureRecognizers/>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="PH0-Sw-tpf" appends="YES" id="oCK-Er-Ruh"/>
-                                </connections>
-                            </imageView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" id="97M-Zc-mbC">
                                 <rect key="frame" x="99" y="28" width="123" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -75,6 +67,22 @@
                                 </segments>
                                 <color key="tintColor" red="0.20000000000000001" green="0.72941176470588232" blue="0.87058823529411766" alpha="1" colorSpace="calibratedRGB"/>
                             </segmentedControl>
+                            <imageView alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="reschedule" id="yoP-65-gfR">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="PH0-Sw-tpf" appends="YES" id="oCK-Er-Ruh"/>
+                                </connections>
+                            </imageView>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="list" id="xkQ-EX-dFf">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="JAw-hR-Qoq" appends="YES" id="aOw-tW-Y39"/>
+                                </connections>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -82,6 +90,7 @@
                         <outlet property="archiveIconImage" destination="KaL-NM-naE" id="sdG-EK-VPR"/>
                         <outlet property="feedImage" destination="DPf-5d-YRw" id="UUH-jI-Dvx"/>
                         <outlet property="laterIconImage" destination="t9k-To-t2M" id="hSz-wi-Ffd"/>
+                        <outlet property="listImage" destination="xkQ-EX-dFf" id="9TL-Kf-OQC"/>
                         <outlet property="messageImage" destination="py8-Se-V02" id="wwn-lk-Ozq"/>
                         <outlet property="messageView" destination="2Vf-sR-slw" id="YAJ-MT-l8W"/>
                         <outlet property="rescheduleImage" destination="yoP-65-gfR" id="ody-9w-n5c"/>
@@ -89,7 +98,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="ZKQ-8D-DN0">
+                <panGestureRecognizer minimumNumberOfTouches="1" id="ZKQ-8D-DN0" userLabel="pan message">
                     <connections>
                         <action selector="onPanMessage:" destination="vXZ-lx-hvc" id="P61-s3-Dcl"/>
                     </connections>
@@ -97,6 +106,11 @@
                 <tapGestureRecognizer id="PH0-Sw-tpf" userLabel="tap reschedule">
                     <connections>
                         <action selector="onTapReschedule:" destination="vXZ-lx-hvc" id="Vvr-dZ-5Lt"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="JAw-hR-Qoq" userLabel="tap list">
+                    <connections>
+                        <action selector="onTapList:" destination="vXZ-lx-hvc" id="uu7-go-Gzd"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
@@ -110,6 +124,7 @@
         <image name="help_label" width="320" height="37"/>
         <image name="later_icon" width="25" height="25"/>
         <image name="later_nav_icon" width="25" height="20"/>
+        <image name="list" width="320" height="568"/>
         <image name="mail_nav_icon" width="25" height="20"/>
         <image name="message" width="320" height="86"/>
         <image name="nav" width="320" height="65"/>
