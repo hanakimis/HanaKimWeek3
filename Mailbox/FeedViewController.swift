@@ -41,7 +41,7 @@ class FeedViewController: UIViewController {
     }
 
     func translateToAlpha(translation: CGFloat) -> CGFloat {
-        return min(abs(translation / 60), 1)
+        return min(translation / -60, 1)
     }
     
     
@@ -56,40 +56,39 @@ class FeedViewController: UIViewController {
             translationX = panGesture.translationInView(messageView).x
             messageImage.frame.origin.x = translationX
             
-            laterIconImage.alpha = translateToAlpha(translationX)
-            archiveIconImage.alpha = translateToAlpha(translationX)
-            
+
+
             println("translationX: \(translationX)")
             
-            if (60 <= translationX) && (translationX >= -60) {
-                self.messageView.backgroundColor = gray
-                
-            } else if (translationX < -60) {
+            if (-320 <= translationX) && (translationX < -260) {
+                messageView.backgroundColor = brown
+                laterIconImage.image = UIImage(named: "list_icon")
+                laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
+
+            } else if (-260 <= translationX) && (translationX < -60) {
                 messageView.backgroundColor = yellow
                 laterIconImage.image = UIImage(named: "later_icon")
+                laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
                 
-                if (translationX < -260) {
-                    messageView.backgroundColor = brown
-                    laterIconImage.image = UIImage(named: "list_icon")
-                    
-                } else {
-                    laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
-                }
+            } else if (-60 <= translationX) && (translationX < 60) {
+                self.messageView.backgroundColor = gray
+                archiveIconImage.alpha = translateToAlpha(translationX)
+                laterIconImage.alpha = translateToAlpha(translationX)
                 
-            }
-            
-            if (translationX > 60) {
-                println("asdfasdf")
+            } else if (60 <= translationX) && (translationX < 260) {
                 self.messageView.backgroundColor = green
-                
-                if (translationX > 260) {
-                    messageView.backgroundColor = red
-                    archiveIconImage.image = UIImage(named: "delete_icon")
-                    
-                } else {
-                    archiveIconImage.frame.origin.x = archiveIconOriginalOriginX + translationX - 60
-                }
+                archiveIconImage.image = UIImage(named: "archive_icon")
+                archiveIconImage.frame.origin.x = archiveIconOriginalOriginX + translationX - 60
+
+            } else if (260 <= translationX) && (translationX < 320) {
+                messageView.backgroundColor = red
+                archiveIconImage.image = UIImage(named: "delete_icon")
+                archiveIconImage.frame.origin.x = archiveIconOriginalOriginX + translationX - 60
+
+            } else {
+                println("WTF... Shouldn't get here... need to throw exception")
             }
+
         } else if (panGesture.state == UIGestureRecognizerState.Ended) {
 
             if (-260 < translationX) && (translationX < -60) {
