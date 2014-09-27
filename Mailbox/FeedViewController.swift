@@ -39,12 +39,6 @@ class FeedViewController: UIViewController {
         messageView.backgroundColor = gray
 
     }
-
-    func translateToAlpha(translation: CGFloat) -> CGFloat {
-        return min(translation / -60, 1)
-    }
-    
-    
     
     @IBAction func onPanMessage(panGesture: UIPanGestureRecognizer) {
         if (panGesture.state == UIGestureRecognizerState.Began) {
@@ -56,10 +50,6 @@ class FeedViewController: UIViewController {
             translationX = panGesture.translationInView(messageView).x
             messageImage.frame.origin.x = translationX
             
-
-
-            println("translationX: \(translationX)")
-            
             if (-320 <= translationX) && (translationX < -260) {
                 messageView.backgroundColor = brown
                 laterIconImage.image = UIImage(named: "list_icon")
@@ -70,10 +60,13 @@ class FeedViewController: UIViewController {
                 laterIconImage.image = UIImage(named: "later_icon")
                 laterIconImage.frame.origin.x = laterIconOriginalOriginX + translationX + 60
                 
-            } else if (-60 <= translationX) && (translationX < 60) {
+            } else if (-60 <= translationX) && (translationX < 0) {
+                self.messageView.backgroundColor = gray
+                laterIconImage.alpha = translateToAlpha(translationX)
+                
+            } else if (0 <= translationX) && (translationX < 60) {
                 self.messageView.backgroundColor = gray
                 archiveIconImage.alpha = translateToAlpha(translationX)
-                laterIconImage.alpha = translateToAlpha(translationX)
                 
             } else if (60 <= translationX) && (translationX < 260) {
                 self.messageView.backgroundColor = green
@@ -91,39 +84,73 @@ class FeedViewController: UIViewController {
 
         } else if (panGesture.state == UIGestureRecognizerState.Ended) {
 
-            if (-260 < translationX) && (translationX < -60) {
-                rescheduleImage.alpha = 1
-                
-            } else if (translationX < -260) {
-                listImage.alpha = 1
-                
-            } else if (translationX > 260) {
-
-            } else {
-                UIView.animateWithDuration(0.8, animations: { () -> Void in
-                    self.messageImage.frame.origin.x = 0
-                    self.laterIconImage.frame.origin.x = self.laterIconOriginalOriginX
-                    self.archiveIconImage.frame.origin.x = self.archiveIconOriginalOriginX
-                    
-                    }) {(finished: Bool) -> Void in
-                }
             
+            if (-320 <= translationX) && (translationX < -260) {
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    self.messageImage.frame.origin.x = -320
+                    }) {(finished: Bool) -> Void in
+                        self.listImage.alpha = 1
+                }
+            } else if (-260 <= translationX) && (translationX < -60) {
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    self.messageImage.frame.origin.x = -320
+                    self.laterIconImage.frame.origin.x = -320
+                    }) {(finished: Bool) -> Void in
+                        self.rescheduleImage.alpha = 1
+                }
+            } else if (-60 <= translationX) && (translationX < 0) {
+                // reset
+                
+            } else if (0 <= translationX) && (translationX < 60) {
+                // reset
+                
+            } else if (60 <= translationX) && (translationX < 260) {
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    self.messageImage.frame.origin.x = 320
+                    self.archiveIconImage.frame.origin.x = 320
+                    }) {(finished: Bool) -> Void in
+                        self.collapseMessage()
+                }
+            } else if (260 <= translationX) && (translationX < 320) {
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    self.messageImage.frame.origin.x = 320
+                    self.archiveIconImage.frame.origin.x = 320
+                    }) {(finished: Bool) -> Void in
+                        self.collapseMessage()
+                }
+            } else {
+                println("WTF... Shouldn't get here... need to throw exception")
             }
+            
+
         }
         
     }
     
     
+    func translateToAlpha(translation: CGFloat) -> CGFloat {
+        /// need to clena this up
+        return min(abs(translation / 60), 1)
+    }
     
+    func collapseMessage() {
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.feedImage.frame.origin.y = 79
+            }) {(finished: Bool) -> Void in
+                self.messageView.alpha = 0
+        }
+    }
     
     
     @IBAction func onTapReschedule(sender: UITapGestureRecognizer) {
         rescheduleImage.alpha = 0
+        collapseMessage()
     }
     
     
     @IBAction func onTapList(sender: UITapGestureRecognizer) {
         listImage.alpha = 0
+        collapseMessage()
     }
     
     override func didReceiveMemoryWarning() {
