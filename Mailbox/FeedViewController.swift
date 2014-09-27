@@ -150,6 +150,7 @@ class FeedViewController: UIViewController {
     }
     
     func collapseMessage() {
+        
         UIView.animateWithDuration(0.3, animations: { () -> Void in
             self.feedImage.frame.origin.y = 79
             }) {(finished: Bool) -> Void in
@@ -189,11 +190,32 @@ class FeedViewController: UIViewController {
     
     @IBAction func onEdgePan(edgePan: UIScreenEdgePanGestureRecognizer) {
         var translatedX = edgePan.translationInView(parentContainerView).x
-        messagesView.frame.origin.x = translatedX
+        var locationX = edgePan.locationInView(parentContainerView).x
+        var diff: CGFloat!
         
-        println("On Edge Pan, showMenu = \(menuOpen)")
+        if (edgePan.state == UIGestureRecognizerState.Began) {
+            
+        } else if (edgePan.state == UIGestureRecognizerState.Changed) {
         
-        if (edgePan.state == UIGestureRecognizerState.Ended) {
+            if (!menuOpen) {
+                messagesView.frame.origin.x = translatedX
+            } else {
+                println("--------------")
+                println("origin    :         \(messagesView.frame.origin.x)")
+                println("translated:         \(translatedX)")
+                println("translated updated: \(translatedX)")
+                locationX = edgePan.locationInView(parentContainerView).x
+                
+                println("location: \(locationX)")
+                diff = locationX - messageView.frame.origin.x
+                
+                messagesView.frame.origin.x = locationX
+
+                
+            }
+            
+            
+        } else if (edgePan.state == UIGestureRecognizerState.Ended) {
             menuOpen = !(edgePan.velocityInView(parentContainerView).x >= 0)
             showMenu(UIScreenEdgePanGestureRecognizer)
             
