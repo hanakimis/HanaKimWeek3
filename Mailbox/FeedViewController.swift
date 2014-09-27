@@ -13,6 +13,10 @@ class FeedViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var messageImage: UIImageView!
     @IBOutlet weak var messageView: UIView!
+    @IBOutlet weak var messagesView: UIView!
+    @IBOutlet weak var helpLabelImage: UIImageView!
+    @IBOutlet weak var searchBarImage: UIImageView!
+    
     @IBOutlet weak var archiveIconImage: UIImageView!
     @IBOutlet weak var laterIconImage: UIImageView!
     @IBOutlet weak var rescheduleImage: UIImageView!
@@ -27,6 +31,7 @@ class FeedViewController: UIViewController {
     let green  = UIColor(red: 0.27, green: 0.75, blue: 0.17, alpha: 1)
     let red    = UIColor(red: 0.91, green: 0.12, blue: 0.12, alpha: 1)
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         rescheduleImage.alpha = 0
@@ -34,10 +39,15 @@ class FeedViewController: UIViewController {
         archiveIconImage.alpha = 0
         laterIconImage.alpha = 0
         
-        var height = feedImage.frame.height + messageImage.frame.height
+        var height = feedImage.frame.height + messageImage.frame.height + searchBarImage.frame.height + helpLabelImage.frame.height
         scrollView.contentSize = CGSize(width: 320, height: height)
         messageView.backgroundColor = gray
 
+        var edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
+        edgeGesture.edges = UIRectEdge.Left
+        messagesView.addGestureRecognizer(edgeGesture)
+        
+        
     }
     
     @IBAction func onPanMessage(panGesture: UIPanGestureRecognizer) {
@@ -134,7 +144,7 @@ class FeedViewController: UIViewController {
     
     
     func translateToAlpha(translation: CGFloat) -> CGFloat {
-        /// need to clena this up
+        /// need to clean this up
         return min(abs(translation / 60), 1)
     }
     
@@ -143,6 +153,7 @@ class FeedViewController: UIViewController {
             self.feedImage.frame.origin.y = 79
             }) {(finished: Bool) -> Void in
                 self.messageView.alpha = 0
+                self.scrollView.contentSize.height -= self.messageImage.frame.height
         }
     }
     
