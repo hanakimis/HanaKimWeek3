@@ -9,6 +9,8 @@
 import UIKit
 
 class FeedViewController: UIViewController {
+    
+    @IBOutlet var parentContainerView: UIView!
     @IBOutlet weak var feedImage: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var messageImage: UIImageView!
@@ -17,6 +19,7 @@ class FeedViewController: UIViewController {
     @IBOutlet weak var helpLabelImage: UIImageView!
     @IBOutlet weak var searchBarImage: UIImageView!
     
+    @IBOutlet weak var menuView: UIView!
     @IBOutlet weak var archiveIconImage: UIImageView!
     @IBOutlet weak var laterIconImage: UIImageView!
     @IBOutlet weak var rescheduleImage: UIImageView!
@@ -47,7 +50,12 @@ class FeedViewController: UIViewController {
         var edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
         edgeGesture.edges = UIRectEdge.Left
         messagesView.addGestureRecognizer(edgeGesture)
+        
+        var edgeGesture2 = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
+        edgeGesture2.edges = UIRectEdge.Right
+        messagesView.addGestureRecognizer(edgeGesture2)
     }
+    
     
     @IBAction func onPanMessage(panGesture: UIPanGestureRecognizer) {
         if (panGesture.state == UIGestureRecognizerState.Began) {
@@ -55,7 +63,6 @@ class FeedViewController: UIViewController {
             archiveIconOriginalOriginX = archiveIconImage.frame.origin.x
             
         } else if (panGesture.state == UIGestureRecognizerState.Changed) {
-            
             translationX = panGesture.translationInView(messageView).x
             messageImage.frame.origin.x = translationX
             
@@ -92,8 +99,6 @@ class FeedViewController: UIViewController {
             }
 
         } else if (panGesture.state == UIGestureRecognizerState.Ended) {
-
-            
             if (-320 <= translationX) && (translationX < -260) {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
                     self.messageImage.frame.origin.x = -320
@@ -135,10 +140,7 @@ class FeedViewController: UIViewController {
             } else {
                 println("WTF... Shouldn't get here... need to throw exception")
             }
-            
-
         }
-        
     }
     
     
@@ -169,7 +171,6 @@ class FeedViewController: UIViewController {
     
     
     @IBAction func showMenu(sender: AnyObject) {
-
         if menuOpen {
             UIView.animateWithDuration(0.4, animations: { () -> Void in
                 self.messagesView.frame.origin.x = 0
@@ -177,18 +178,27 @@ class FeedViewController: UIViewController {
                     self.menuOpen = false
             }
         } else {
-            UIView.animateWithDuration(0.4, animations: { () -> Void in
+            UIView.animateWithDuration(0.3, animations: { () -> Void in
                 self.messagesView.frame.origin.x = 280
                 }) {(finished: Bool) -> Void in
                     self.menuOpen = true
             }
         }
-        
     }
     
     
-    @IBAction func onEdgePan(sender: UIScreenEdgePanGestureRecognizer) {
-        showMenu(UIScreenEdgePanGestureRecognizer)
+    @IBAction func onEdgePan(edgePan: UIScreenEdgePanGestureRecognizer) {
+        var translatedX = edgePan.translationInView(parentContainerView).x
+        messagesView.frame.origin.x = translatedX
+        
+        println("On Edge Pan, showMenu = \(menuOpen)")
+        
+        if (edgePan.state == UIGestureRecognizerState.Ended) {
+            menuOpen = !(edgePan.velocityInView(parentContainerView).x >= 0)
+            showMenu(UIScreenEdgePanGestureRecognizer)
+            
+            println("done edge panning")
+        }
     }
     
     override func didReceiveMemoryWarning() {

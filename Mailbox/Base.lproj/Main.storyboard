@@ -120,9 +120,11 @@
                         <outlet property="helpLabelImage" destination="b74-j4-S2H" id="G2a-R8-m7Z"/>
                         <outlet property="laterIconImage" destination="t9k-To-t2M" id="hSz-wi-Ffd"/>
                         <outlet property="listImage" destination="xkQ-EX-dFf" id="9TL-Kf-OQC"/>
+                        <outlet property="menuView" destination="6nd-gc-dmX" id="oFy-mT-8pc"/>
                         <outlet property="messageImage" destination="py8-Se-V02" id="wwn-lk-Ozq"/>
                         <outlet property="messageView" destination="2Vf-sR-slw" id="YAJ-MT-l8W"/>
                         <outlet property="messagesView" destination="iSe-WP-CAo" id="udL-Ct-fDs"/>
+                        <outlet property="parentContainerView" destination="kh9-bI-dsS" id="5wd-lU-KbT"/>
                         <outlet property="rescheduleImage" destination="yoP-65-gfR" id="ody-9w-n5c"/>
                         <outlet property="scrollView" destination="V1n-Ur-pph" id="fbm-vs-3qU"/>
                         <outlet property="searchBarImage" destination="b74-j4-S2H" id="8EJ-DQ-zkA"/>
