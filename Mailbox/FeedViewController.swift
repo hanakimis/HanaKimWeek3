@@ -99,10 +99,15 @@ class FeedViewController: UIViewController {
                         self.rescheduleImage.alpha = 1
                 }
             } else if (-60 <= translationX) && (translationX < 0) {
-                // reset
-                
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    self.messageImage.frame.origin.x = 0
+                    self.laterIconImage.frame.origin.x = self.laterIconOriginalOriginX
+                    })
             } else if (0 <= translationX) && (translationX < 60) {
-                // reset
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    self.messageImage.frame.origin.x = 0
+                    self.archiveIconImage.frame.origin.x = self.archiveIconOriginalOriginX
+                })
                 
             } else if (60 <= translationX) && (translationX < 260) {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
