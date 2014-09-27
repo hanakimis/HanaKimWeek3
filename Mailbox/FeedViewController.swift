@@ -31,7 +31,8 @@ class FeedViewController: UIViewController {
     let green  = UIColor(red: 0.27, green: 0.75, blue: 0.17, alpha: 1)
     let red    = UIColor(red: 0.91, green: 0.12, blue: 0.12, alpha: 1)
     
-    
+    var menuOpen = false
+
     override func viewDidLoad() {
         super.viewDidLoad()
         rescheduleImage.alpha = 0
@@ -46,8 +47,6 @@ class FeedViewController: UIViewController {
         var edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
         edgeGesture.edges = UIRectEdge.Left
         messagesView.addGestureRecognizer(edgeGesture)
-        
-        
     }
     
     @IBAction func onPanMessage(panGesture: UIPanGestureRecognizer) {
@@ -163,10 +162,33 @@ class FeedViewController: UIViewController {
         collapseMessage()
     }
     
-    
     @IBAction func onTapList(sender: UITapGestureRecognizer) {
         listImage.alpha = 0
         collapseMessage()
+    }
+    
+    
+    @IBAction func showMenu(sender: AnyObject) {
+
+        if menuOpen {
+            UIView.animateWithDuration(0.4, animations: { () -> Void in
+                self.messagesView.frame.origin.x = 0
+                }) {(finished: Bool) -> Void in
+                    self.menuOpen = false
+            }
+        } else {
+            UIView.animateWithDuration(0.4, animations: { () -> Void in
+                self.messagesView.frame.origin.x = 280
+                }) {(finished: Bool) -> Void in
+                    self.menuOpen = true
+            }
+        }
+        
+    }
+    
+    
+    @IBAction func onEdgePan(sender: UIScreenEdgePanGestureRecognizer) {
+        showMenu(UIScreenEdgePanGestureRecognizer)
     }
     
     override func didReceiveMemoryWarning() {
