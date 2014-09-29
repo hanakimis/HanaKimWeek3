@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FeedViewController: UIViewController {
+class FeedViewController: UIViewController, UIAlertViewDelegate {
     
     @IBOutlet var parentContainerView: UIView!
     @IBOutlet weak var feedImage: UIImageView!
@@ -25,6 +25,9 @@ class FeedViewController: UIViewController {
     @IBOutlet weak var rescheduleImage: UIImageView!
     @IBOutlet weak var listImage: UIImageView!
     
+    var lastAction: Int!
+    
+    
     var laterIconOriginalOriginX: CGFloat!
     var archiveIconOriginalOriginX: CGFloat!
     var translationX: CGFloat!
@@ -33,15 +36,25 @@ class FeedViewController: UIViewController {
     let brown  = UIColor(red: 0.59, green: 0.52, blue: 0.09, alpha: 1)
     let green  = UIColor(red: 0.27, green: 0.75, blue: 0.17, alpha: 1)
     let red    = UIColor(red: 0.91, green: 0.12, blue: 0.12, alpha: 1)
+    var openMenuX: CGFloat!
     
     var menuOpen = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // 1 = archive
+        // 2 = delete
+        // 3 = later
+        // 4 = list
+        lastAction = 0
+        
+        
         rescheduleImage.alpha = 0
         listImage.alpha = 0
         archiveIconImage.alpha = 0
         laterIconImage.alpha = 0
+        openMenuX = 280
         
         var height = feedImage.frame.height + messageImage.frame.height + searchBarImage.frame.height + helpLabelImage.frame.height
         scrollView.contentSize = CGSize(width: 320, height: height)
@@ -180,7 +193,7 @@ class FeedViewController: UIViewController {
             }
         } else {
             UIView.animateWithDuration(0.3, animations: { () -> Void in
-                self.messagesView.frame.origin.x = 280
+                self.messagesView.frame.origin.x = self.openMenuX
                 }) {(finished: Bool) -> Void in
                     self.menuOpen = true
             }
@@ -193,21 +206,26 @@ class FeedViewController: UIViewController {
         var locationX = edgePan.locationInView(parentContainerView).x
         var diff: CGFloat!
         
-        if (edgePan.state == UIGestureRecognizerState.Began) {
-            
-        } else if (edgePan.state == UIGestureRecognizerState.Changed) {
+            //diff = edgePan.locationInView(parentContainerView).x - openMenuX
         
+            diff = 1
+        
+        if (edgePan.state == UIGestureRecognizerState.Began) {
+            diff = 2
+            //println("start loc:         \(edgePan.locationInView(parentContainerView).x)")
+
+        } else if (edgePan.state == UIGestureRecognizerState.Changed) {
+            
             if (!menuOpen) {
                 messagesView.frame.origin.x = translatedX
             } else {
-                println("--------------")
-                println("origin    :         \(messagesView.frame.origin.x)")
-                println("translated:         \(translatedX)")
-                println("translated updated: \(translatedX)")
-                locationX = edgePan.locationInView(parentContainerView).x
+               // println("--------------")
+               // println("origin    :         \(messagesView.frame.origin.x)")
+                println("diff:         \(diff)")
+               // println("translated updated: \(translatedX)")
+                //locationX = edgePan.locationInView(parentContainerView).x - diff
                 
-                println("location: \(locationX)")
-                diff = locationX - messageView.frame.origin.x
+               // println("location: \(locationX)")
                 
                 messagesView.frame.origin.x = locationX
 
@@ -221,6 +239,34 @@ class FeedViewController: UIViewController {
             
             println("done edge panning")
         }
+    }
+    
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.becomeFirstResponder()
+    }
+    
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override func motionEnded(motion: UIEventSubtype, withEvent event: (UIEvent!)) {
+        
+        var undoMessage = "Are you sure you want ot undo that, and move 1 item from X to Y?"
+        
+        if(event.subtype == UIEventSubtype.MotionShake) {
+            
+            var alertView = UIAlertView(title: "Undo last action", message: undoMessage, delegate: self, cancelButtonTitle: "Cancel", otherButtonTitles: "Undo")
+            
+            alertView.show()
+        }
+    }
+    
+    func alertView(alertView: UIAlertView!, clickedButtonAtIndex buttonIndex: Int) {
+        // 0 is cancel
+        // 1 is Undo
+        
     }
     
     override func didReceiveMemoryWarning() {
