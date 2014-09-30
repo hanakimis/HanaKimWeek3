@@ -127,7 +127,6 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
                     self.messageImage.frame.origin.x = 0
                     self.archiveIconImage.frame.origin.x = self.archiveIconOriginalOriginX
                 })
-                
             } else if (60 <= translationX) && (translationX < 260) {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
                     self.messageImage.frame.origin.x = 320
@@ -257,20 +256,31 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
         // 0 is cancel
         // 1 is Undo
         if (buttonIndex == 1) {
-            self.messageView.alpha = 1
-            self.messageImage.frame.origin = CGPoint(x: 0, y: 0)
-            laterIconImage.frame.origin.x = laterIconOriginalOriginX
-            laterIconImage.image = UIImage(named: "later_icon")
-            archiveIconImage.frame.origin.x = archiveIconOriginalOriginX
-            archiveIconImage.image = UIImage(named: "archive_icon")
-            
-            UIView.animateWithDuration(0.3, animations: { () -> Void in
-                self.feedImage.frame.origin.y = 79 + self.messageImage.frame.height
-                }) {(finished: Bool) -> Void in
-                    self.scrollView.contentSize.height += self.messageImage.frame.height
-            }
+            resetMail()
         }
     }
+    
+    func resetMail() {
+        self.messageView.alpha = 1
+        self.messageImage.frame.origin = CGPoint(x: 0, y: 0)
+        laterIconImage.alpha = 0
+        laterIconImage.frame.origin.x = laterIconOriginalOriginX
+        laterIconImage.image = UIImage(named: "later_icon")
+        archiveIconImage.alpha = 0
+        archiveIconImage.frame.origin.x = archiveIconOriginalOriginX
+        archiveIconImage.image = UIImage(named: "archive_icon")
+        
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.feedImage.frame.origin.y = 79 + self.messageImage.frame.height
+            }) {(finished: Bool) -> Void in
+                self.scrollView.contentSize.height += self.messageImage.frame.height
+        }
+    }
+    
+    @IBAction func resetMail(sender: AnyObject) {
+        resetMail()
+    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
