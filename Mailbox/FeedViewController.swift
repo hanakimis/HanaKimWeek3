@@ -64,7 +64,9 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
         if (panGesture.state == UIGestureRecognizerState.Began) {
             laterIconOriginalOriginX = laterIconImage.frame.origin.x
             archiveIconOriginalOriginX = archiveIconImage.frame.origin.x
-            
+            laterIconImage.alpha = 0
+            archiveIconImage.alpha = 0
+
         } else if (panGesture.state == UIGestureRecognizerState.Changed) {
             translationX = panGesture.translationInView(messageView).x
             messageImage.frame.origin.x = translationX
