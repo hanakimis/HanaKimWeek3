@@ -263,6 +263,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     }
     
     func resetMail() {
+        lastAction = 0
         self.messageView.alpha = 1
         self.messageImage.frame.origin = CGPoint(x: 0, y: 0)
         laterIconImage.alpha = 0
