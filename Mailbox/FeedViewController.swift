@@ -26,7 +26,8 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     @IBOutlet weak var listImage: UIImageView!
     
     var lastAction: Int!
-    
+    var diff: CGFloat!
+
     
     var laterIconOriginalOriginX: CGFloat!
     var archiveIconOriginalOriginX: CGFloat!
@@ -37,6 +38,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     let green  = UIColor(red: 0.27, green: 0.75, blue: 0.17, alpha: 1)
     let red    = UIColor(red: 0.91, green: 0.12, blue: 0.12, alpha: 1)
     var openMenuX: CGFloat!
+    var edgeGesture: UIScreenEdgePanGestureRecognizer!
     
     var menuOpen = false
 
@@ -60,13 +62,9 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
         scrollView.contentSize = CGSize(width: 320, height: height)
         messageView.backgroundColor = gray
 
-        var edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
+        edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
         edgeGesture.edges = UIRectEdge.Left
         messagesView.addGestureRecognizer(edgeGesture)
-        
-        var edgeGesture2 = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
-        edgeGesture2.edges = UIRectEdge.Right
-        messagesView.addGestureRecognizer(edgeGesture2)
     }
     
     
@@ -190,12 +188,14 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
                 self.messagesView.frame.origin.x = 0
                 }) {(finished: Bool) -> Void in
                     self.menuOpen = false
+                    self.edgeGesture.edges = UIRectEdge.Left
             }
         } else {
             UIView.animateWithDuration(0.3, animations: { () -> Void in
                 self.messagesView.frame.origin.x = self.openMenuX
                 }) {(finished: Bool) -> Void in
                     self.menuOpen = true
+                    self.edgeGesture.edges = UIRectEdge.Right
             }
         }
     }
@@ -204,15 +204,9 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     @IBAction func onEdgePan(edgePan: UIScreenEdgePanGestureRecognizer) {
         var translatedX = edgePan.translationInView(parentContainerView).x
         var locationX = edgePan.locationInView(parentContainerView).x
-        var diff: CGFloat!
-        
-            //diff = edgePan.locationInView(parentContainerView).x - openMenuX
-        
-            diff = 1
         
         if (edgePan.state == UIGestureRecognizerState.Began) {
-            diff = 2
-            //println("start loc:         \(edgePan.locationInView(parentContainerView).x)")
+            diff = edgePan.locationInView(parentContainerView).x - openMenuX
 
         } else if (edgePan.state == UIGestureRecognizerState.Changed) {
             
@@ -223,7 +217,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
                // println("origin    :         \(messagesView.frame.origin.x)")
                 println("diff:         \(diff)")
                // println("translated updated: \(translatedX)")
-                //locationX = edgePan.locationInView(parentContainerView).x - diff
+                locationX = edgePan.locationInView(parentContainerView).x - diff
                 
                // println("location: \(locationX)")
                 
