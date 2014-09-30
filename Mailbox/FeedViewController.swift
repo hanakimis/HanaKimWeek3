@@ -27,30 +27,23 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     
     var lastAction: Int!
     var diff: CGFloat!
-
-    
     var laterIconOriginalOriginX: CGFloat!
     var archiveIconOriginalOriginX: CGFloat!
     var translationX: CGFloat!
+    var openMenuX: CGFloat!
+    var edgeGesture: UIScreenEdgePanGestureRecognizer!
+    
+    var menuOpen = false
     let gray   = UIColor(red: 0.80, green: 0.80, blue: 0.80, alpha: 1)
     let yellow = UIColor(red: 0.97, green: 0.91, blue: 0.04, alpha: 1)
     let brown  = UIColor(red: 0.59, green: 0.52, blue: 0.09, alpha: 1)
     let green  = UIColor(red: 0.27, green: 0.75, blue: 0.17, alpha: 1)
     let red    = UIColor(red: 0.91, green: 0.12, blue: 0.12, alpha: 1)
-    var openMenuX: CGFloat!
-    var edgeGesture: UIScreenEdgePanGestureRecognizer!
-    
-    var menuOpen = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // 1 = archive
-        // 2 = delete
-        // 3 = later
-        // 4 = list
+
         lastAction = 0
-        
         
         rescheduleImage.alpha = 0
         listImage.alpha = 0
@@ -66,7 +59,6 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
         edgeGesture.edges = UIRectEdge.Left
         messagesView.addGestureRecognizer(edgeGesture)
     }
-    
     
     @IBAction func onPanMessage(panGesture: UIPanGestureRecognizer) {
         if (panGesture.state == UIGestureRecognizerState.Began) {
@@ -116,6 +108,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
                     }) {(finished: Bool) -> Void in
                         self.listImage.alpha = 1
                 }
+                lastAction = 1
             } else if (-260 <= translationX) && (translationX < -60) {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
                     self.messageImage.frame.origin.x = -320
@@ -123,6 +116,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
                     }) {(finished: Bool) -> Void in
                         self.rescheduleImage.alpha = 1
                 }
+                lastAction = 2
             } else if (-60 <= translationX) && (translationX < 0) {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
                     self.messageImage.frame.origin.x = 0
@@ -141,6 +135,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
                     }) {(finished: Bool) -> Void in
                         self.collapseMessage()
                 }
+                lastAction = 3
             } else if (260 <= translationX) && (translationX < 320) {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
                     self.messageImage.frame.origin.x = 320
@@ -148,6 +143,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
                     }) {(finished: Bool) -> Void in
                         self.collapseMessage()
                 }
+                lastAction = 4
             } else {
                 println("WTF... Shouldn't get here... need to throw exception")
             }
@@ -161,7 +157,6 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     }
     
     func collapseMessage() {
-        
         UIView.animateWithDuration(0.3, animations: { () -> Void in
             self.feedImage.frame.origin.y = 79
             }) {(finished: Bool) -> Void in
@@ -209,29 +204,16 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
             diff = edgePan.locationInView(parentContainerView).x - openMenuX
 
         } else if (edgePan.state == UIGestureRecognizerState.Changed) {
-            
             if (!menuOpen) {
                 messagesView.frame.origin.x = translatedX
             } else {
-               // println("--------------")
-               // println("origin    :         \(messagesView.frame.origin.x)")
-                println("diff:         \(diff)")
-               // println("translated updated: \(translatedX)")
                 locationX = edgePan.locationInView(parentContainerView).x - diff
-                
-               // println("location: \(locationX)")
-                
                 messagesView.frame.origin.x = locationX
-
-                
             }
-            
             
         } else if (edgePan.state == UIGestureRecognizerState.Ended) {
             menuOpen = !(edgePan.velocityInView(parentContainerView).x >= 0)
             showMenu(UIScreenEdgePanGestureRecognizer)
-            
-            println("done edge panning")
         }
     }
     
@@ -246,13 +228,27 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     }
     
     override func motionEnded(motion: UIEventSubtype, withEvent event: (UIEvent!)) {
+        var fromWhere = ""
         
-        var undoMessage = "Are you sure you want ot undo that, and move 1 item from X to Y?"
+        // 1 = list
+        // 2 = later
+        // 3 = archive
+        // 4 = delete
+        switch lastAction {
+        case 1:
+            fromWhere = "the list"
+        case 2:
+            fromWhere = "later"
+        case 3:
+            fromWhere = "archives"
+        case 4:
+            fromWhere = "the trash"
+        default:
+            println("undo on nothing")
+        }
         
-        if(event.subtype == UIEventSubtype.MotionShake) {
-            
-            var alertView = UIAlertView(title: "Undo last action", message: undoMessage, delegate: self, cancelButtonTitle: "Cancel", otherButtonTitles: "Undo")
-            
+        if (event.subtype == UIEventSubtype.MotionShake) && (lastAction != 0) {
+            var alertView = UIAlertView(title: "Undo last action", message: "Are you sure you want to undo that, and move 1 item from \(fromWhere) back to Inbox?", delegate: self, cancelButtonTitle: "Cancel", otherButtonTitles: "Undo")
             alertView.show()
         }
     }
@@ -260,7 +256,20 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
     func alertView(alertView: UIAlertView!, clickedButtonAtIndex buttonIndex: Int) {
         // 0 is cancel
         // 1 is Undo
-        
+        if (buttonIndex == 1) {
+            self.messageView.alpha = 1
+            self.messageImage.frame.origin = CGPoint(x: 0, y: 0)
+            laterIconImage.frame.origin.x = laterIconOriginalOriginX
+            laterIconImage.image = UIImage(named: "later_icon")
+            archiveIconImage.frame.origin.x = archiveIconOriginalOriginX
+            archiveIconImage.image = UIImage(named: "archive_icon")
+            
+            UIView.animateWithDuration(0.3, animations: { () -> Void in
+                self.feedImage.frame.origin.y = 79 + self.messageImage.frame.height
+                }) {(finished: Bool) -> Void in
+                    self.scrollView.contentSize.height += self.messageImage.frame.height
+            }
+        }
     }
     
     override func didReceiveMemoryWarning() {
