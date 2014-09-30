@@ -107,6 +107,7 @@ class FeedViewController: UIViewController, UIAlertViewDelegate {
             if (-320 <= translationX) && (translationX < -260) {
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
                     self.messageImage.frame.origin.x = -320
+                    self.laterIconImage.frame.origin.x = -320
                     }) {(finished: Bool) -> Void in
                         self.listImage.alpha = 1
                 }
